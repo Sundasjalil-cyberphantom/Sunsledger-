@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
+    <title>SunsLedger Budget Guardian ☀️</title>
+    <style>
+        :root {
+            --bg-slate: #1a1c2c;
+            --card-glass: rgba(40, 44, 72, 0.75);
+            --orchid: #d16ba5;
+            --mint: #5ffbf1;
+            --text-white: #e0e6ed;
+            --soft-grad: linear-gradient(135deg, #d16ba5 0%, #86a8e7 50%, #5ffbf1 100%);
+        }
+
+        html, body { 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: var(--bg-slate); 
+            color: var(--text-white);
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+        }
+
+        .app-container { height: 100vh; display: flex; flex-direction: column; }
+        
+        .nav-header { 
+            background: rgba(26, 28, 44, 0.95);
+            backdrop-filter: blur(10px);
+            padding-top: 20px; 
+            border-bottom: 2px solid var(--orchid);
+            z-index: 1000;
+        }
+
+        .brand-title {
+            font-family: 'Lexend', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FFE27D 0%, #ffffff 50%, #FFCC33 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            display: inline-block;
+        }
+
+        .nav-tabs { border-bottom: none; justify-content: space-around; margin-top: 10px; }
+        
+        .nav-link { 
+            color: #8892b0 !important; 
+            border: none !important; 
+            font-weight: 600; 
+            padding: 10px 15px; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .nav-link.active { 
+            color: var(--mint) !important; 
+            background: transparent !important; 
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(95, 251, 241, 0.5);
+        }
+
+        .custom-card { 
+            background: var(--card-glass);
+            backdrop-filter: blur(15px);
+            border-radius: 22px; 
+            padding: 25px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .progress { height: 10px; border-radius: 12px; background-color: #2d314d; overflow: hidden; }
+        .progress-bar { 
+            background: var(--soft-grad) !important;
+            border-radius: 12px;
+            transition: width 1s ease-in-out;
+        }
+
+        .btn-orchid {
+            background: var(--soft-grad);
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 8px 15px rgba(209, 107, 165, 0.3);
+        }
+        .btn-orchid:hover { 
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 20px rgba(209, 107, 165, 0.5);
+        }
+
+        .btn-outline-mint {
+            border: 2px solid var(--mint);
+            color: var(--mint);
+            border-radius: 12px;
+            font-weight: 700;
+            background: transparent;
+        }
+
+        .form-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white !important;
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .form-glass:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--mint);
+            box-shadow: 0 0 10px rgba(95, 251, 241, 0.2);
+            outline: none;
+        }
+
+        .section-view { display: none; }
+        .section-view.active { 
+            display: block; 
+            animation: bounceIn 0.5s ease; 
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            70% { transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .warning-banner {
+            background: rgba(209, 107, 165, 0.1);
+            border-left: 5px solid var(--orchid);
+            color: #ffb8d9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .main-content { flex: 1; overflow-y: auto; padding: 20px; }
+        .main-content::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="nav-header">
+        <div class="text-center px-3">
+            <span class="brand-title">SunsLedger Budget Guardian ☀️</span>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" id="btn-status" onclick="show('status')"><i class="fa-solid fa-chart-line d-block mb-1 fs-5"></i> Status</a></li>
+            <li class="nav-item"><a class="nav-link" id="btn-add" onclick="show('add')"><i class="fa-solid fa-plus-circle d-block mb-1 fs-5"></i> Spend</a></li>
+            <li class="nav-item"><a class="nav-link" id="btn-history" onclick="show('history')"><i class="fa-solid fa-history d-block mb-1 fs-5"></i> Log</a></li>
+            <li class="nav-item"><a class="nav-link" id="btn-settings" onclick="show('settings')"><i class="fa-solid fa-cog d-block mb-1 fs-5"></i> Setup</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        {% if ai_warnings %}
+            {% for alert in ai_warnings %}
+            <div class="warning-banner shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ alert }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <div id="status" class="section-view active">
+            <div class="custom-card text-center">
+                <p class="text-uppercase small fw-bold mb-1" style="color: var(--orchid); letter-spacing: 2px;">Monthly Pulse</p>
+                <h1 class="display-4 fw-bold">
+                    {{ "{:,.0f}".format(total_spent) }} 
+                </h1>
+                <p class="text-secondary fw-bold">out of {{ "{:,.0f}".format(total_income) }} PKR</p>
+            </div>
+
+            <div class="row g-3">
+                {% for b in buckets %}
+                <div class="col-md-6">
+                    <div class="custom-card p-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">{{ b.category }}</span>
+                            {% set left = b.allocated - b.spent %}
+                            <span class="fw-bold" style="color: {{ 'var(--orchid)' if left < 0 else 'var(--mint)' }}">
+                                {{ "{:,.0f}".format(left) }} PKR left
+                            </span>
+                        </div>
+                        {% set per = (b.spent / b.allocated) * 100 if b.allocated > 0 else 0 %}
+                        <div class="progress">
+                            <div class="progress-bar" 
+                                 style="width: {{ per if per <= 100 else 100 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="add" class="section-view">
+            <div class="custom-card mx-auto" style="max-width: 500px;">
+                <h4 class="fw-bold mb-4 text-center"><i class="fa-solid fa-feather-pointed me-2" style="color: var(--orchid);"></i>Record Expense</h4>
+                <form method="POST" action="/">
+                    <div class="mb-3">
+                        <label class="small fw-bold mb-2">DESCRIPTION</label>
+                        <input type="text" name="item_name" class="form-control form-glass" placeholder="What was it?" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold mb-2">AMOUNT (PKR)</label>
+                        <input type="number" name="amount" class="form-control form-glass" placeholder="0" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="small fw-bold mb-2">BUCKET</label>
+                        <select name="category" class="form-select form-glass">
+                            {% for b in buckets %}<option>{{ b.category }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-orchid w-100 shadow">Update Budget</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="history" class="section-view">
+            <div class="custom-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Spending Log</h5>
+                    <a href="/export_pdf" class="btn btn-outline-mint btn-sm">
+                        <i class="fa-solid fa-file-export me-1"></i> EXPORT PDF
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-borderless text-white align-middle">
+                        <tbody>
+                            {% for log in history %}
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td class="ps-0">
+                                    <div class="fw-bold">{{ log.item_name }}</div>
+                                    <div class="small text-secondary">{{ log.date_added.strftime('%d %b') }} • {{ log.category }}</div>
+                                </td>
+                                <td class="text-end pe-0">
+                                    <span class="fw-bold text-danger">-{{ "{:,.0f}".format(log.amount) }}</span>
+                                    <a href="/delete_entry/{{ log.id }}" class="ms-3 text-secondary" onclick="return confirm('Wipe this record?')"><i class="fa-solid fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="section-view">
+            <div class="custom-card">
+                <h4 class="fw-bold mb-4">Manage Limits</h4>
+                <form action="/update_settings" method="POST">
+                    {% for b in buckets %}
+                    <div class="mb-3">
+                        <label class="small fw-bold mb-2 text-secondary">{{ b.category }}</label>
+                        <input type="number" name="alloc_{{ b.id }}" class="form-control form-glass" placeholder="{{ b.allocated }}">
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-orchid w-100 mt-3 shadow">Apply Changes</button>
+                </form>
+                <div class="mt-4 pt-4 border-top border-secondary text-center">
+                    <a href="/master_reset" class="text-danger small fw-bold text-decoration-none" onclick="return confirm('ERASE EVERYTHING?')">SYSTEM RESET</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function show(id) {
+        document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('btn-' + id).classList.add('active');
+        document.querySelector('.main-content').scrollTop = 0;
+    }
+</script>
+</body>
+</html>
